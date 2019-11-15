@@ -2,6 +2,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.sun.org.apache.xpath.internal.axes.SelfIteratorNoPredicate;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -27,6 +30,7 @@ public class Venda extends JFrame
 	private JTextField FieldHora;
 	private JTextField FieldData;
 	private JTextField qtdField;
+	private JFrame self;
 	JComboBox<String> comboBoxProduto;
 	JTable tabela;
 	DefaultTableModel modelo;
@@ -40,7 +44,7 @@ public class Venda extends JFrame
 		DB.connect("petshop.db3");
 		ResultSet res;
 		somaItens = 0;
-		
+		self = this;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 700);
 		contentPane = new JPanel();
@@ -171,8 +175,8 @@ public class Venda extends JFrame
 		btnAdicionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				listarProdutos(comboBoxProduto.getSelectedItem().toString(), qtdField.getText(),buscarPreco(),comboBoxPet.getSelectedItem().toString());
 				somaItens += buscarPreco()*Integer.parseInt(qtdField.getText());
+				listarProdutos(comboBoxProduto.getSelectedItem().toString(), qtdField.getText(),buscarPreco(),comboBoxPet.getSelectedItem().toString());
 				System.out.println(somaItens);
 			}
 		});
@@ -232,6 +236,9 @@ public class Venda extends JFrame
 	{
 		DB.connect("PetShop");
 		DB.execQuery("INSERT INTO Pedido (qnt_prod,preco_total) values ("+ qtdField.getText() +","+ somaItens +");") ;
+		String finalizarCompra = "O total da compra foi: " + somaItens + " reais";
+		JOptionPane.showMessageDialog(null, finalizarCompra);
+		self.dispose();		
 	}
 	
 	public int buscarPreco() 
